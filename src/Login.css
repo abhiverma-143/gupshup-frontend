@@ -1,0 +1,153 @@
+/* Login.css - Uses same variables from App.css */
+
+.login-container {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  background: #050510;
+  overflow: hidden;
+}
+
+/* LEFT SIDE */
+.login-visuals {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(circle at bottom left, #1a1a40 0%, #050510 100%);
+  padding: 20px;
+}
+
+.visual-content { text-align: center; z-index: 2; }
+
+.visual-content h1 {
+  font-size: 3.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+  background: linear-gradient(to right, #d946ef, #06b6d4);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 10px;
+}
+
+.visual-content p { color: #aeb9e1; margin-bottom: 20px; font-size: 1.1rem; }
+
+.login-image {
+  width: 100%; max-width: 380px; height: auto;
+  filter: drop-shadow(0 0 25px rgba(217, 70, 239, 0.3));
+  animation: float 5s ease-in-out infinite;
+}
+
+/* RIGHT SIDE */
+.login-form-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #050510;
+  position: relative;
+}
+
+/* Glass Card */
+.glass-card {
+  width: 100%; max-width: 400px;
+  padding: 40px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 40px rgba(0,0,0,0.6);
+  text-align: center;
+}
+
+/* Logo & Header */
+.brand-logo {
+  width: 220px;
+  margin-bottom: 0px;
+  filter: drop-shadow(0 0 20px rgba(6, 182, 212, 0.5));
+}
+
+.form-header p { color: #8892b0; margin-bottom: 30px; }
+
+/* Inputs */
+.input-box { position: relative; margin-bottom: 20px; }
+.input-box .icon { 
+  position: absolute; top: 50%; left: 15px; transform: translateY(-50%); 
+  color: #06b6d4; font-size: 1.2rem;
+}
+
+.input-box input { 
+  width: 100%; padding: 15px 15px 15px 50px; 
+  background: rgba(0,0,0,0.4); 
+  border: 1px solid rgba(255,255,255,0.1); 
+  border-radius: 12px; color: white; outline: none; font-size: 1rem;
+  transition: 0.3s;
+}
+
+.input-box input:focus { border-color: #d946ef; box-shadow: 0 0 10px rgba(217, 70, 239, 0.2); }
+
+/* Buttons */
+.glow-btn { 
+  width: 100%; padding: 14px; border: none; border-radius: 12px; 
+  font-weight: bold; font-size: 1rem; color: white; 
+  background: linear-gradient(90deg, #06b6d4, #d946ef); 
+  cursor: pointer; transition: 0.3s;
+  display: flex; justify-content: center; align-items: center; gap: 10px;
+}
+.glow-btn:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(6, 182, 212, 0.4); }
+
+/* Footer & Resend */
+.footer-text { margin-top: 20px; color: #8892b0; font-size: 0.9rem; }
+.footer-text a { color: #06b6d4; text-decoration: none; font-weight: bold; }
+
+.resend-text { margin-top: 15px; font-size: 0.85rem; color: #aeb9e1; }
+.resend-text span { color: #06b6d4; cursor: pointer; text-decoration: underline; }
+
+/* Animation */
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+.fade-in { animation: fadeIn 0.5s ease-in-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ================= MOBILE RESPONSIVE ================= */
+@media screen and (max-width: 768px) {
+  
+  /* 1. Mobile par Welcome Back aur Robot CHUPA do */
+  .login-visuals {
+    display: none; 
+  }
+
+  /* 2. Form ko puri screen lene do (Centering) */
+  .login-form-wrapper {
+    width: 100%;
+    height: 100vh; /* Puri height */
+    padding: 20px;
+    align-items: center; /* Vertical Center */
+    justify-content: center; /* Horizontal Center */
+  }
+
+  /* 3. Card ko mobile ke liye adjust karein */
+  .glass-card {
+    width: 100%;
+    max-width: 100%;
+    padding: 30px 20px;
+    margin: 0;
+    box-shadow: none; /* Shadow hata kar flat look */
+    background: rgba(255, 255, 255, 0.05); /* Thoda dark background */
+    border: none; /* Border hata dein agar clean chahiye to */
+  }
+
+  /* 4. Logo size adjust */
+  .brand-logo {
+    width: 150px; /* Mobile par thoda chhota */
+    margin-bottom: 20px;
+  }
+
+  /* 5. Text adjustment */
+  .form-header p {
+    font-size: 0.9rem;
+    margin-bottom: 25px;
+    color: #aeb9e1;
+  }
+}

@@ -1,38 +1,258 @@
-.App {
-  text-align: center;
+/* ================= 1. VARIABLES & THEME ================= */
+:root {
+  /* Neon Colors */
+  --primary-cyan: #06b6d4;   /* Bright Cyan */
+  --primary-purple: #d946ef; /* Neon Purple */
+  --gradient-main: linear-gradient(135deg, #06b6d4 0%, #d946ef 100%);
+  
+  /* Backgrounds */
+  --bg-dark: #050510;        /* Deepest Black/Blue */
+  --bg-sidebar: rgba(255, 255, 255, 0.03); /* Glass Effect */
+  --bg-chat: radial-gradient(circle at top right, #1a1a2e 0%, #050510 60%);
+  
+  /* Text Colors */
+  --text-white: #ffffff;
+  --text-gray: #aeb9e1;
+  
+  /* Borders & Shadows */
+  --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+  --neon-shadow: 0 0 15px rgba(6, 182, 212, 0.2);
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* ================= 2. GLOBAL RESET ================= */
+* {
+  box-sizing: border-box;
+  font-family: 'Outfit', sans-serif; /* Modern Font */
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+body, html, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: var(--bg-dark);
+  color: var(--text-white);
+  overflow: hidden; /* Scroll sirf chat area me hoga */
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+/* Custom Scrollbar (Dark & Slim) */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--primary-cyan); }
+
+/* ================= 3. MAIN LAYOUT (ChatRoom.js Structure) ================= */
+.chat-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  background: var(--bg-dark);
+}
+
+/* ================= 4. SIDEBAR (.member-list) ================= */
+.member-list {
+  width: 350px;
+  background: var(--bg-sidebar);
+  backdrop-filter: blur(12px); /* Glassmorphism */
+  border-right: var(--glass-border);
   display: flex;
   flex-direction: column;
+  padding: 20px 10px;
+  transition: transform 0.3s ease;
+  z-index: 10;
+}
+
+/* Sidebar List Item */
+.member {
+  padding: 15px;
+  margin-bottom: 8px;
+  border-radius: 12px;
+  cursor: pointer;
+  color: var(--text-gray);
+  transition: all 0.3s ease;
+  font-weight: 500;
+  display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  gap: 10px;
+}
+
+.member:hover {
+  background: rgba(255, 255, 255, 0.05);
+  padding-left: 20px; /* Slight slide effect */
+}
+
+.member.active {
+  background: rgba(6, 182, 212, 0.1);
+  color: var(--text-white);
+  border-left: 4px solid var(--primary-cyan);
+  box-shadow: var(--neon-shadow);
+}
+
+/* ================= 5. CHAT AREA (.chat-content) ================= */
+.chat-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-chat);
+  position: relative;
+}
+
+/* Messages List Area */
+.chat-messages {
+  flex: 1;
+  padding: 20px 40px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* ================= 6. MESSAGE BUBBLES ================= */
+.chat-message {
+  display: flex;
+  flex-direction: column;
+  max-width: 70%;
+  margin-bottom: 10px;
+}
+
+/* AI / Public Message (Left) */
+.chat-message.public {
+  align-self: flex-start;
+}
+.chat-message.public .message-content {
+  background: #1e1e2e;
+  border: var(--glass-border);
+  border-radius: 0 18px 18px 18px;
+  color: #e2e8f0;
+}
+
+/* User / Self Message (Right) */
+.chat-message.self {
+  align-self: flex-end;
+}
+.chat-message.self .message-content {
+  background: var(--gradient-main); /* Cyan to Purple */
+  color: white;
+  border-radius: 18px 18px 0 18px;
+  box-shadow: 0 4px 15px rgba(217, 70, 239, 0.3);
+}
+
+/* Bubble Text Styling */
+.message-content {
+  padding: 12px 20px;
+  font-size: 15px;
+  line-height: 1.6;
+  position: relative;
+  word-wrap: break-word;
+  white-space: pre-wrap; /* Lists aur code ke liye zaroori */
+}
+
+/* Avatar Styling (Agar hai to) */
+.avatar {
+  width: 35px; height: 35px;
+  border-radius: 50%;
+  border: 2px solid var(--primary-cyan);
+  margin-right: 10px;
+}
+
+/* ================= 7. INPUT AREA (.send-message) ================= */
+.send-message {
+  padding: 15px 30px;
+  background: rgba(5, 5, 16, 0.9);
+  border-top: var(--glass-border);
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.input-message {
+  flex: 1;
+  padding: 15px 20px;
+  border-radius: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  font-size: 15px;
+  outline: none;
+  transition: 0.3s;
+}
+
+.input-message:focus {
+  border-color: var(--primary-cyan);
+  background: rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 10px rgba(6, 182, 212, 0.15);
+}
+
+.send-button {
+  width: 45px; height: 45px;
+  border-radius: 50%;
+  background: var(--gradient-main);
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.2s;
+}
+
+.send-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
+}
+
+/* ================= 8. LOGIN / SIGNUP STYLES ================= */
+.signup-container, .login-container {
+  display: flex;
+  height: 100vh;
+  background: var(--bg-dark);
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 0 40px rgba(0,0,0,0.5);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+/* ================= 9. MOBILE RESPONSIVE ================= */
+@media screen and (max-width: 768px) {
+  .chat-container {
+    position: relative;
+    overflow: hidden;
   }
-  to {
-    transform: rotate(360deg);
+
+  /* Mobile me Sidebar chupa rahega ya Drawer banega */
+  .member-list {
+    position: absolute;
+    left: 0; top: 0; height: 100%;
+    width: 80%; /* Drawer width */
+    background: #0b0b15;
+    transform: translateX(-100%); /* Screen se bahar */
+    z-index: 100;
+    box-shadow: 5px 0 20px rgba(0,0,0,0.5);
+  }
+
+  /* Jab menu open ho (Optional class for toggle) */
+  .member-list.open {
+    transform: translateX(0);
+  }
+
+  .chat-content {
+    width: 100%;
+  }
+
+  .chat-messages {
+    padding: 15px;
+  }
+
+  .message-content {
+    font-size: 14px;
+    padding: 10px 15px;
+  }
+
+  .send-message {
+    padding: 10px 15px;
   }
 }
