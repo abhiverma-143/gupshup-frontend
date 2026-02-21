@@ -13,58 +13,118 @@ const Login = () => {
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // 1️⃣ HANDLE PHONE SUBMIT (Send OTP API)
+  // 1 HANDLE PHONE SUBMIT (Send OTP API)
   // 1️⃣ HANDLE PHONE SUBMIT (Step 1)
+  // const handleSendOtp = async (e) => {
+  //   e.preventDefault();
+
+  //   if (phone.length < 10) {
+  //     toast.error("Please enter a valid 10-digit number! 📱", { theme: "dark" });
+  //     return;
+  //   }
+  //   setLoading(true);
+  //     try {
+  //       const response = await fetch("https://gupshup-backend-81q6.onrender.com/api/auth/send-otp", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ phoneNumber: phone })
+  //     });
+
+  //     const data = await response.json();
+  //     if (response.ok) {
+  //       setLoading(false);
+  //       setStep(2);
+  //       toast.success(`OTP Sent Successfully! 🚀`, { theme: "dark" });
+  //       console.log("Check Backend Terminal for OTP"); 
+  //     } else if (response.status === 404) {
+  //       // ❌ User Nahi Mila -> Redirect to Signup
+  //       setLoading(false);
+        
+  //       toast.info("Number not registered! Redirecting to Signup... 📝", { 
+  //           theme: "dark", 
+  //           autoClose: 2000 
+  //       });
+
+  //       // 👇 2 Second baad Signup page par bhejo
+  //       setTimeout(() => {
+  //           navigate('/signup');
+  //       }, 2000);
+
+  //     } else {
+  //       // ❌ Koi aur error (Jaise: OTP send karne me problem)
+  //       setLoading(false);
+  //       toast.error(data.message || "Failed to send OTP ❌", { theme: "dark" });
+  //     }
+  //   } catch (error) {
+  //     setLoading(false);
+  //     console.error("API Error:", error);
+  //     toast.error("Server error! Is Backend running? ⚠️", { theme: "dark" });
+  //   }
+  // };
+
   const handleSendOtp = async (e) => {
     e.preventDefault();
-
     if (phone.length < 10) {
       toast.error("Please enter a valid 10-digit number! 📱", { theme: "dark" });
       return;
     }
-    
     setLoading(true);
 
-      try {
-        const response = await fetch("https://gupshup-backend-81q6.onrender.com/api/auth/send-otp", {
+    try {
+      const response = await fetch("https://gupshup-backend-81q6.onrender.com/api/auth/send-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phoneNumber: phone })
       });
 
       const data = await response.json();
-
       if (response.ok) {
-        // ✅ User Mila -> OTP Sent
+        // ✅ असली जादू यहाँ है!
         setLoading(false);
         setStep(2);
-        toast.success(`OTP Sent Successfully! 🚀`, { theme: "dark" });
-        console.log("Check Backend Terminal for OTP"); 
-      } else if (response.status === 404) {
-        // ❌ User Nahi Mila -> Redirect to Signup
-        setLoading(false);
+
+        // 👇 ये नोटिफिकेशन अब यूज़र को OTP भी बता देगा
+        toast.success(
+          <div>
+            OTP Sent Successfully! 🚀 <br />
+            <strong>Your Demo OTP is: {data.otp}</strong> 
+          </div>, 
+          { 
+            theme: "dark", 
+            autoClose: 10000 // 10 second tak dikhega taaki user padh sake
+          }
+        );
         
+        console.log("Developer Mode OTP:", data.otp); 
+      } else if (response.status === 404) {
+        setLoading(false);
         toast.info("Number not registered! Redirecting to Signup... 📝", { 
             theme: "dark", 
             autoClose: 2000 
         });
 
-        // 👇 2 Second baad Signup page par bhejo
         setTimeout(() => {
             navigate('/signup');
         }, 2000);
 
       } else {
-        // Koi aur error
         setLoading(false);
-        toast.error(data.message || "Failed to send OTP ❌", { theme: "dark" });
+        // अगर Fast2SMS का "Bad Request" एरर आता है, तब भी हम OTP दिखा सकते हैं
+        // क्योंकि बैकएंड एरर देने से पहले ही OTP जनरेट कर चुका होता है।
+        if(data.otp) {
+            setStep(2);
+            toast.info(`Demo Mode: Use OTP ${data.otp}`, { theme: "dark" });
+        } else {
+            toast.error(data.message || "Failed to send OTP ❌", { theme: "dark" });
+        }
       }
     } catch (error) {
       setLoading(false);
       console.error("API Error:", error);
       toast.error("Server error! Is Backend running? ⚠️", { theme: "dark" });
     }
-  };
+};
+
 
   // 2️⃣ HANDLE OTP VERIFY (Verify API)
   const handleVerifyOtp = async (e) => {
