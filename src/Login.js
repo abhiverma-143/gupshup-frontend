@@ -87,14 +87,14 @@ const Login = () => {
         toast.success(
           <div>
             OTP Sent Successfully! 🚀 <br />
-            <strong>Your Demo OTP is: {data.otp}</strong> 
+            <strong>Your GUPSHUP Login OTP is: {data.otp}</strong> 
           </div>, 
           { 
             theme: "dark", 
             autoClose: 10000 // 10 second tak dikhega taaki user padh sake
           }
         );
-        
+
         console.log("Developer Mode OTP:", data.otp); 
       } else if (response.status === 404) {
         setLoading(false);
