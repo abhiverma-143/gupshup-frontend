@@ -68,7 +68,7 @@ const LandingPage = () => {
     e.preventDefault();
     setStatus('Sending...'); 
     try {
-      const response = await fetch('http://localhost:8081/api/contact/send', {
+      const response = await fetch('https://gupshup-backend-81q6.onrender.com/api/contact/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
@@ -77,15 +77,15 @@ const LandingPage = () => {
       if (response.ok) {
         setStatus('✅ Message sent successfully! We will contact you soon.');
         setFormData({ name: '', email: '', message: '' }); 
-        setTimeout(() => setStatus(''), 4000);
+        setTimeout(() => setStatus(''), 2000);
       } else {
         setStatus('❌ Failed to send message. Please try again.');
-        setTimeout(() => setStatus(''), 4000);
+        setTimeout(() => setStatus(''), 2000);
       }
     } catch (error) {
       console.error('Error:', error);
       setStatus('❌ Server Error. Please make sure backend is running.');
-      setTimeout(() => setStatus(''), 4000);
+      setTimeout(() => setStatus(''), 2000);
     }
   };
 

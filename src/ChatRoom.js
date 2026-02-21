@@ -10,7 +10,7 @@ import './Chat.css';
 import { FiSearch, FiMoreVertical, FiPlus, FiX, FiLogOut, FiEdit2, FiCamera, FiUser, FiInfo, FiPhone, FiSend, FiSmile, FiArrowLeft, FiTrash2, FiPaperclip, FiFileText, FiMic, FiTrash, FiPlay, FiPause, FiMapPin, FiUsers } from "react-icons/fi"; 
 
 const NOTIFICATION_SOUND = 'https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.m4a';
-const SOCKET_URL = 'http://localhost:8081/ws';
+const SOCKET_URL = 'https://gupshup-backend-81q6.onrender.com/ws';
 
 let stompClient = null;
 let isConnecting = false;
@@ -263,7 +263,7 @@ const ChatRoom = () => {
 
     const fetchChatHistory = async (contactPhone) => {
         try {
-            const response = await fetch(`http://localhost:8081/api/messages/${phoneRef.current}/${contactPhone}`);
+            const response = await fetch(`https://gupshup-backend-81q6.onrender.com/api/messages/${phoneRef.current}/${contactPhone}`);
             if (response.ok) {
                 const history = await response.json();
                 setPrivateChats(prev => {
@@ -352,7 +352,7 @@ const ChatRoom = () => {
         if (file.size > 20 * 1024 * 1024) { toast.error("File size must be less than 20MB"); return; }
         const formData = new FormData(); formData.append("file", file);
         try {
-            const response = await fetch('http://localhost:8081/api/files/upload', { method: 'POST', body: formData });
+            const response = await fetch('https://gupshup-backend-81q6.onrender.com/api/files/upload', { method: 'POST', body: formData });
             if (response.ok) {
                 const data = await response.json();
                 const fileUrl = data.fileUrl;
@@ -399,7 +399,7 @@ const ChatRoom = () => {
     const uploadAudioFile = async (file) => {
         const formData = new FormData(); formData.append("file", file);
         try {
-            const response = await fetch('http://localhost:8081/api/files/upload', { method: 'POST', body: formData });
+            const response = await fetch('https://gupshup-backend-81q6.onrender.com/api/files/upload', { method: 'POST', body: formData });
             if (response.ok) { const data = await response.json(); executeSendMessage(`AUDIO::${data.fileUrl}`); } 
             else { toast.error("Failed to send audio!"); }
         } catch (error) { toast.error("Server Error!"); }

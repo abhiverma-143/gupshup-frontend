@@ -25,8 +25,8 @@ const Login = () => {
     
     setLoading(true);
 
-    try {
-      const response = await fetch("http://localhost:8081/api/auth/send-otp", {
+      try {
+        const response = await fetch("https://gupshup-backend-81q6.onrender.com/api/auth/send-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phoneNumber: phone })
@@ -73,7 +73,7 @@ const Login = () => {
 
     try {
       // 👇 Backend API Call
-      const response = await fetch("http://localhost:8081/api/auth/verify-otp", {
+      const response = await fetch("https://gupshup-backend-81q6.onrender.com/api/auth/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phoneNumber: phone, otp: otp })
