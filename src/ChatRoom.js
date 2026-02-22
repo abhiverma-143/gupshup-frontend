@@ -86,7 +86,7 @@ const ChatRoom = () => {
 
     const [currentChat, setCurrentChat] = useState("CHATROOM");
     const [search, setSearch] = useState("");
-    const [isMobileChatOpen, setIsMobileChatOpen] = useState(false);
+    const [isMobileChatOpen, setIsMobileChatOpen] = useState(false); 
     const [showEmoji, setShowEmoji] = useState(false);
     const [showProfileModal, setShowProfileModal] = useState(false);
     const [showAddModal, setShowAddModal] = useState(false);
@@ -125,7 +125,25 @@ const ChatRoom = () => {
     useEffect(() => {
         const token = localStorage.getItem("userToken");
         const phone = localStorage.getItem("userPhone");
+        const lastActivity = localStorage.getItem("lastActivity"); // 👈 Check last active time
+
         if (!token || !phone) { navigate("/login"); return; }
+
+        // 👇 5 DAY EXPIRATION LOGIC 🚀
+        const currentTime = new Date().getTime();
+        const fiveDaysInMillis = 5 * 24 * 60 * 60 * 1000; // 5 Din milliseconds mein
+
+        if (lastActivity) {
+            if (currentTime - parseInt(lastActivity) > fiveDaysInMillis) {
+                // Agar 5 din se zyada ho gaye, to logout kar do
+                localStorage.clear();
+                toast.error("Session expired! Please login again. 🔒", { theme: "dark" });
+                navigate("/login");
+                return; // Yahan se aage mat badho
+            }
+        }
+        // Agar user andar aa gaya (5 din ke andar), to uska timer wapas reset kar do
+        localStorage.setItem("lastActivity", currentTime.toString());
         
         phoneRef.current = phone;
         const savedAvatar = localStorage.getItem("userAvatar");
@@ -275,9 +293,8 @@ const ChatRoom = () => {
         } catch (error) { console.error("Failed to load chat history", error); }
     };
 
-    // 👇 FIX 1: JAB BHI CONTACT SWITCH HOGA, INPUT BOX CLEAR HO JAYEGA
     useEffect(() => {
-        setUser(prev => ({ ...prev, msg: '' })); // Input Box Saaf kar do
+        setUser(prev => ({ ...prev, msg: '' })); 
 
         if (currentChat !== "CHATROOM") { 
             fetchChatHistory(currentChat);
@@ -286,7 +303,6 @@ const ChatRoom = () => {
     // eslint-disable-next-line
     }, [currentChat]);
 
-    // 👇 FIX 2: TYPING EVENTS KO THROTTLE KIYA HAI TAKI SERVER HANG NA HO
     const handleTyping = (e) => {
         setUser(p => ({ ...p, msg: e.target.value }));
         
@@ -299,7 +315,7 @@ const ChatRoom = () => {
             
             typingTimeouts.current['my_typing'] = setTimeout(() => {
                 typingTimeouts.current['my_typing'] = null;
-            }, 1500); // 1.5 second me sirf 1 hi typing event jayega
+            }, 1500); 
         }
     };
 
@@ -406,7 +422,6 @@ const ChatRoom = () => {
     };
 
     const formatTime = (secs) => { const m = Math.floor(secs / 60); const s = secs % 60; return `${m}:${s < 10 ? '0' : ''}${s}`; };
-
     const renderMessageContent = (content) => {
         if (!content) return null;
         if (content.startsWith("IMAGE::")) return <img src={content.replace("IMAGE::", "")} alt="Sent attachment" className="chat-uploaded-image" onClick={() => window.open(content.replace("IMAGE::", ""), '_blank')} />;
@@ -486,7 +501,20 @@ const ChatRoom = () => {
     const playSound = () => audioRef.current.play().catch(() => {});
     const handleImageUpload = (e) => { const file = e.target.files[0]; if (file) { const reader = new FileReader(); reader.onloadend = () => { setAvatar(reader.result); localStorage.setItem("userAvatar", reader.result); }; reader.readAsDataURL(file); } };
     const handleLogout = () => { if(stompClient) { stompClient.disconnect(); stompClient = null; isConnecting = false; } localStorage.clear(); navigate("/login"); };
-    const handleClearChat = () => { if(currentChat === "CHATROOM") setPublicChats([]); else setPrivateChats(prev => { const n = new Map(prev); n.set(currentChat, []); return n; }); setShowMenu(false); toast.info("Chat Cleared"); };
+    
+    const handleClearChat = () => { 
+        if(currentChat === "CHATROOM") {
+            setPublicChats([]); 
+        } else {
+            setPrivateChats(prev => { 
+                const n = new Map(prev); 
+                n.set(currentChat, []); 
+                return n; 
+            }); 
+        }
+        setShowMenu(false); 
+    };
+
     const handleSaveProfile = (e) => { e.preventDefault(); localStorage.setItem("userName", user.name); window.location.reload(); };
 
     const filteredContacts = [...contacts].filter(contact => 
@@ -494,7 +522,12 @@ const ChatRoom = () => {
         contact.toLowerCase().includes(search.toLowerCase())
     );
 
-    useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [publicChats, privateChats, currentChat, typingUsers]);
+    useEffect(() => { 
+        const isMobile = window.innerWidth <= 768;
+        if (isMobile && !isMobileChatOpen) return; 
+        
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); 
+    }, [publicChats, privateChats, currentChat, typingUsers, isMobileChatOpen]);
 
     return (
         <div className="app-container dark-theme">
@@ -538,7 +571,7 @@ const ChatRoom = () => {
                 </div>
 
                 {/* CHAT AREA */}
-                <div className={`chat-area ${isMobileChatOpen ? 'visible-mobile' : ''}`}>
+                <div className={`chat-area ${isMobileChatOpen ? 'visible-mobile active' : ''}`}>
                     <div className="chat-header">
                         <button className="back-btn" onClick={() => setIsMobileChatOpen(false)}><FiArrowLeft /></button>
                         <div className="header-info">
@@ -640,7 +673,6 @@ const ChatRoom = () => {
                                 
                                 <input placeholder="Type a message..." value={user.msg} onChange={handleTyping} onKeyDown={e => e.key === 'Enter' && sendMessage()} />
                                 
-                                {/* 👇 FIX 3: Agar input me text hai, tabhi send button dikhega warna Mic dikhega */}
                                 {user.msg.trim() ? (
                                     <button className="send-btn" onClick={sendMessage} title="Send Message"><FiSend /></button>
                                 ) : (

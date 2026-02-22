@@ -87,7 +87,7 @@ const Login = () => {
         toast.success(
           <div>
             OTP Sent Successfully! 🚀 <br />
-            <strong>Your GUPSHUP Login OTP is: {data.otp}</strong> 
+            <strong>Your GupShup Login OTP is: {data.otp}</strong> 
           </div>, 
           { 
             theme: "dark", 
@@ -145,9 +145,11 @@ const Login = () => {
         // ✅ Login Success
         // Backend se aaya message use kar rahe hain (data.message)
         toast.success(data.message || "Login Successful! Welcome 🎉", { theme: "dark" });
-        
+
+        localStorage.setItem("lastActivity", new Date().getTime().toString());
         localStorage.setItem("userToken", "logged_in"); // Ye batayega ki user login hai
         localStorage.setItem("userPhone", phone); 
+        localStorage.setItem("lastActivity", new Date().getTime().toString());
 
         setTimeout(() => {
             navigate("/chat"); 

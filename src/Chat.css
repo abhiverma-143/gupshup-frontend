@@ -40,7 +40,7 @@ body { background: var(--bg); color: var(--text); }
 
 /* ================= LAYOUT ================= */
 .app-container { height: 100vh; width: 100vw; position: relative; }
-.chat-layout { display: flex; height: 100%; width: 100%; }
+.chat-layout { display: flex; height: 100%; width: 100%; position: relative; overflow: hidden; }
 
 /* ================= SIDEBAR ================= */
 .sidebar {
@@ -90,7 +90,7 @@ body { background: var(--bg); color: var(--text); }
 }
 .header-info h3 { font-size: 16px; color: var(--text); }
 .header-info span { font-size: 12px; color: var(--text-sec); }
-.back-btn { display: none; background: none; border: none; color: var(--text); margin-right: 10px; font-size: 1.2rem; cursor: pointer; }
+.back-btn { display: none; background: none; border: none; color: var(--text); margin-right: 15px; font-size: 1.5rem; cursor: pointer; }
 
 .messages-container { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
 
@@ -132,7 +132,6 @@ body { background: var(--bg); color: var(--text); }
 .close-btn { background: none; border: none; color: var(--text-sec); font-size: 1.5rem; cursor: pointer; transition: 0.2s; }
 .close-btn:hover { color: var(--danger); transform: rotate(90deg); }
 
-/* --- Fixed Profile Inputs --- */
 .profile-edit-section { display: flex; justify-content: center; margin-bottom: 25px; }
 
 .profile-pic-large {
@@ -149,7 +148,6 @@ body { background: var(--bg); color: var(--text); }
 }
 .profile-pic-large:hover .overlay { opacity: 1; }
 
-/* Input Styling Fix for Dark Mode */
 .input-group-profile { margin-bottom: 20px; text-align: left; }
 .input-group-profile label {
     display: flex; align-items: center; gap: 8px;
@@ -158,11 +156,10 @@ body { background: var(--bg); color: var(--text); }
 
 .edit-input-wrapper { position: relative; display: flex; align-items: center; }
 
-/* 👇 The Fix for White Input Boxes */
 .profile-input {
     width: 100%; padding: 12px 40px 12px 12px;
-    background: var(--input) !important; /* Forces dark background */
-    color: var(--text) !important;       /* Forces white text */
+    background: var(--input) !important;
+    color: var(--text) !important;
     border: 1px solid var(--border); border-radius: 8px;
     font-size: 1rem; outline: none; transition: 0.3s;
 }
@@ -182,7 +179,6 @@ body { background: var(--bg); color: var(--text); }
 }
 .save-btn:hover, .glow-btn:hover { background: var(--primary-hover); transform: translateY(-1px); }
 
-/* --- 3 Dots Dropdown Menu --- */
 .dropdown {
     position: absolute; top: 45px; right: 0;
     background: var(--header); width: 150px;
@@ -196,541 +192,136 @@ body { background: var(--bg); color: var(--text); }
 }
 .dropdown div:hover { background: rgba(255,255,255,0.05); }
 
-/* ================= MOBILE ================= */
-@media (max-width: 768px) {
-    .sidebar { width: 100%; }
-    .chat-area { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: translateX(100%); transition: transform 0.3s; z-index: 50; }
-    .visible-mobile { transform: translateX(0); }
-    .hidden-mobile { display: none; }
-    .back-btn { display: block; }
-}
 
+/* ================= MOBILE (UPDATED MAGIC 🚀) ================= */
+@media (max-width: 768px) {
+    .sidebar { 
+        width: 100%; 
+        position: absolute; 
+        top: 0; 
+        left: 0; 
+        height: 100%; 
+        z-index: 10; /* Sidebar peeche rahega */
+    }
+    
+    .chat-area { 
+        position: absolute; 
+        top: 0; 
+        left: 0; 
+        width: 100%; 
+        height: 100%; 
+        transform: translateX(100%); /* Shuru me screen ke bahar chhupa rahega */
+        transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Smooth WhatsApp jaisi sliding */
+        z-index: 50; /* Ye sidebar ke upar aayega */
+    }
+    
+    /* Jab chat open ho tab ye class lagani hai (React se) */
+    .chat-area.active, 
+    .chat-area.visible-mobile { 
+        transform: translateX(0); /* Chat screen par aa jayegi */
+    }
+    
+    .back-btn { 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+    }
+}
 
 
 /* Online Status Indicator */
 .status-dot {
-    height: 10px;
-    width: 10px;
-    border-radius: 50%;
-    display: inline-block;
-    margin-right: 8px;
-    border: 2px solid #1f2c34; /* Dark border to separate from avatar */
+    height: 10px; width: 10px; border-radius: 50%;
+    display: inline-block; margin-right: 8px;
+    border: 2px solid #1f2c34; 
 }
+.online { background-color: #00a884; box-shadow: 0 0 5px #00a884; }
+.offline { background-color: #888; }
+.contact-info h4 { display: flex; align-items: center; justify-content: space-between; }
 
-.online {
-    background-color: #00a884; /* WhatsApp Green */
-    box-shadow: 0 0 5px #00a884;
-}
-
-.offline {
-    background-color: #888; /* Gray */
-}
-
-.contact-info h4 {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
 
 /* =========================================
-   🖼️ UPLOADED IMAGES & FILES IN CHAT (RESPONSIVE FIX)
+   🖼️ UPLOADED IMAGES & FILES IN CHAT
    ========================================= */
+.bubble-content.image-bubble { padding: 4px !important; position: relative; width: fit-content; max-width: 100%; box-sizing: border-box; }
+.chat-uploaded-image { width: 260px; max-width: 100%; height: auto; max-height: 320px; border-radius: 8px; cursor: pointer; object-fit: cover; display: block; }
+.msg-meta.image-meta { position: absolute; bottom: 8px; right: 8px; background: rgba(0, 0, 0, 0.45); padding: 4px 8px; border-radius: 10px; margin: 0; display: flex; align-items: center; z-index: 2; }
+.msg-meta.image-meta .timestamp, .msg-meta.image-meta .msg-status { color: #ffffff !important; text-shadow: 0 1px 2px rgba(0,0,0,0.6); font-size: 11px; }
 
-/* 1. IMAGE BUBBLE STYLING */
-.bubble-content.image-bubble {
-    padding: 4px !important; /* Image ke liye choti padding */
-    position: relative;
-    width: fit-content;
-    max-width: 100%; 
-    box-sizing: border-box;
-}
+.bubble-content.file-bubble { padding: 4px !important; max-width: 100%; box-sizing: border-box; }
+.chat-file-card { display: flex; align-items: center; gap: 12px; padding: 12px; background: rgba(15, 23, 42, 0.95); border-radius: 10px; cursor: pointer; width: 260px; max-width: 100%; box-sizing: border-box; border: 1px solid rgba(255, 255, 255, 0.1); transition: all 0.2s; }
+.chat-file-card:hover { background: rgba(30, 41, 59, 1); border-color: #4cc9f0; }
+.file-icon-box { width: 40px; height: 40px; background: linear-gradient(135deg, #4361ee 0%, #f72585 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; flex-shrink: 0; }
+.file-details { display: flex; flex-direction: column; overflow: hidden; flex: 1; }
+.file-name { font-size: 13.5px; font-weight: 600; color: white; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; margin-bottom: 4px; }
+.file-size { font-size: 11px; color: #b0b0d1; }
 
-/* Image Setting (Mobile responsive fix) */
-.chat-uploaded-image {
-    width: 260px; /* Desktop par ideal width */
-    max-width: 100%; /* 📱 Mobile par box ke bahar nahi jayegi */
-    height: auto;
-    max-height: 320px;
-    border-radius: 8px; /* Kone thode smooth */
-    cursor: pointer;
-    object-fit: cover;
-    display: block; 
-}
-
-/* Timestamp OVER the Image */
-.msg-meta.image-meta {
-    position: absolute;
-    bottom: 8px;
-    right: 8px;
-    background: rgba(0, 0, 0, 0.45); /* Dark transparent box */
-    padding: 4px 8px;
-    border-radius: 10px;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    z-index: 2; /* Text ko upar rakhne ke liye */
-}
-
-/* Image ke upar time aur tick safed dikhe */
-.msg-meta.image-meta .timestamp,
-.msg-meta.image-meta .msg-status {
-    color: #ffffff !important;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.6);
-    font-size: 11px;
-}
-
-
-/* 2. FILE/DOCUMENT CARD BUBBLE */
-.bubble-content.file-bubble {
-    padding: 4px !important;
-    max-width: 100%;
-    box-sizing: border-box;
-}
-
-/* File Card ka Design */
-.chat-file-card {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px;
-    background: rgba(15, 23, 42, 0.95); /* Premium dark slate */
-    border-radius: 10px;
-    cursor: pointer;
-    width: 260px; 
-    max-width: 100%; /* 📱 Mobile fix: container ke andar hi rahega */
-    box-sizing: border-box; /* Padding ko width me shamil karne ke liye */
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.2s;
-}
-
-.chat-file-card:hover {
-    background: rgba(30, 41, 59, 1);
-    border-color: #4cc9f0;
-}
-
-/* File ka Icon Box */
-.file-icon-box {
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, #4361ee 0%, #f72585 100%);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    color: white;
-    flex-shrink: 0;
-}
-
-.file-details {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    flex: 1;
-}
-
-.file-name {
-    font-size: 13.5px;
-    font-weight: 600;
-    color: white;
-    white-space: nowrap;
-    text-overflow: ellipsis; /* Lamba naam automatically "... " ho jayega */
-    overflow: hidden;
-    margin-bottom: 4px;
-}
-
-.file-size {
-    font-size: 11px;
-    color: #b0b0d1;
-}
-
-/* 📱 Mobile Specific Adjustments for Bubbles */
-@media (max-width: 768px) {
-    .message-bubble {
-        max-width: 85%; /* Mobile par message box ko thodi zyada jagah de di */
-    }
-}
-
+@media (max-width: 768px) { .message-bubble { max-width: 85%; } }
 
 
 /* =========================================
    🎤 VOICE RECORDING & AUDIO PLAYER CSS
    ========================================= */
-
-/* Mic Button Design */
-.mic-btn {
-    background: transparent;
-    border: none;
-    color: #b0b0d1;
-    font-size: 22px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 10px;
-}
-
-.mic-btn:hover {
-    color: #f72585; /* Neon pink hover */
-    transform: scale(1.1);
-}
-
-/* Recording UI Bar (Replaces Input box while recording) */
-.recording-ui {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    background: rgba(247, 37, 133, 0.1);
-    border: 1px solid rgba(247, 37, 133, 0.3);
-    border-radius: 20px;
-    padding: 10px 20px;
-    animation: fadeIn 0.3s ease;
-}
-
-.recording-indicator {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: #f72585;
-    font-weight: 600;
-    font-size: 15px;
-    font-family: 'Inter', sans-serif;
-}
-
-/* Red Blinking Dot for Recording */
-.red-dot {
-    width: 10px;
-    height: 10px;
-    background-color: #f72585;
-    border-radius: 50%;
-    animation: blink 1s infinite alternate;
-}
-
-@keyframes blink {
-    from { opacity: 1; box-shadow: 0 0 8px #f72585; }
-    to { opacity: 0.3; box-shadow: 0 0 2px #f72585; }
-}
-
-.recording-actions {
-    display: flex;
-    gap: 15px;
-}
-
-.cancel-record-btn {
-    background: transparent;
-    border: none;
-    color: #ff4d4d;
-    font-size: 20px;
-    cursor: pointer;
-    transition: 0.2s;
-}
+.mic-btn { background: transparent; border: none; color: #b0b0d1; font-size: 22px; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; padding: 0 10px; }
+.mic-btn:hover { color: #f72585; transform: scale(1.1); }
+.recording-ui { display: flex; align-items: center; justify-content: space-between; width: 100%; background: rgba(247, 37, 133, 0.1); border: 1px solid rgba(247, 37, 133, 0.3); border-radius: 20px; padding: 10px 20px; animation: fadeIn 0.3s ease; }
+.recording-indicator { display: flex; align-items: center; gap: 10px; color: #f72585; font-weight: 600; font-size: 15px; font-family: 'Inter', sans-serif; }
+.red-dot { width: 10px; height: 10px; background-color: #f72585; border-radius: 50%; animation: blink 1s infinite alternate; }
+@keyframes blink { from { opacity: 1; box-shadow: 0 0 8px #f72585; } to { opacity: 0.3; box-shadow: 0 0 2px #f72585; } }
+.recording-actions { display: flex; gap: 15px; }
+.cancel-record-btn { background: transparent; border: none; color: #ff4d4d; font-size: 20px; cursor: pointer; transition: 0.2s; }
 .cancel-record-btn:hover { transform: scale(1.1); color: #ff1a1a; }
+.send-record-btn { background: linear-gradient(135deg, #4361ee 0%, #f72585 100%); border: none; color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; box-shadow: 0 4px 10px rgba(247, 37, 133, 0.3); }
 
-.send-record-btn {
-    background: linear-gradient(135deg, #4361ee 0%, #f72585 100%);
-    border: none;
-    color: white;
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(247, 37, 133, 0.3);
-}
+.bubble-content.audio-bubble { padding: 10px 10px 5px 10px !important; }
+.chat-audio-wrapper { display: flex; align-items: center; margin-bottom: 5px; }
+.chat-audio-player { height: 40px; width: 250px; max-width: 100%; outline: none; }
+.chat-audio-player::-webkit-media-controls-panel { background-color: rgba(255, 255, 255, 0.9); border-radius: 20px; }
 
-/* Audio Player inside Chat Bubble */
-.bubble-content.audio-bubble {
-    padding: 10px 10px 5px 10px !important;
-}
+/* Custom Audio Player */
+.bubble-content.audio-bubble { padding: 8px 12px !important; background: rgba(30, 41, 59, 0.6) !important; border-radius: 15px; }
+.custom-voice-player { display: flex; align-items: center; gap: 12px; width: 250px; max-width: 100%; }
+.play-pause-btn { width: 38px; height: 38px; border-radius: 50%; border: none; background: linear-gradient(135deg, #4361ee 0%, #f72585 100%); color: white; font-size: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: transform 0.2s; }
+.play-pause-btn:hover { transform: scale(1.05); }
+.voice-waveform { flex: 1; display: flex; align-items: center; }
+.voice-slider { -webkit-appearance: none; width: 100%; height: 4px; background: rgba(255, 255, 255, 0.2); border-radius: 2px; outline: none; transition: 0.1s; }
+.voice-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 12px; height: 12px; border-radius: 50%; background: #4cc9f0; cursor: pointer; box-shadow: 0 0 5px rgba(76, 201, 240, 0.8); }
+.voice-time { font-size: 11px; color: #b0b0d1; font-weight: 500; min-width: 30px; text-align: right; }
 
-.chat-audio-wrapper {
-    display: flex;
-    align-items: center;
-    margin-bottom: 5px;
-}
-
-.chat-audio-player {
-    height: 40px;
-    width: 250px;
-    max-width: 100%;
-    outline: none;
-}
-
-/* Chrome/Safari me audio player ka default white background dark karne ki koshish (Browser dependent) */
-.chat-audio-player::-webkit-media-controls-panel {
-    background-color: rgba(255, 255, 255, 0.9);
-    border-radius: 20px;
-}
-
-/* =========================================
-   🎧 CUSTOM AUDIO PLAYER CSS
-   ========================================= */
-
-.bubble-content.audio-bubble {
-    padding: 8px 12px !important;
-    background: rgba(30, 41, 59, 0.6) !important; /* Halka dark background */
-    border-radius: 15px;
-}
-
-.custom-voice-player {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 250px;
-    max-width: 100%;
-}
-
-/* Play/Pause Button */
-.play-pause-btn {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    border: none;
-    background: linear-gradient(135deg, #4361ee 0%, #f72585 100%);
-    color: white;
-    font-size: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    flex-shrink: 0;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    transition: transform 0.2s;
-}
-
-.play-pause-btn:hover {
-    transform: scale(1.05);
-}
-
-/* Waveform/Slider Container */
-.voice-waveform {
-    flex: 1;
-    display: flex;
-    align-items: center;
-}
-
-/* Custom Range Slider */
-.voice-slider {
-    -webkit-appearance: none;
-    width: 100%;
-    height: 4px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 2px;
-    outline: none;
-    transition: 0.1s;
-}
-
-.voice-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: #4cc9f0; /* Neon blue thumb */
-    cursor: pointer;
-    box-shadow: 0 0 5px rgba(76, 201, 240, 0.8);
-}
-
-/* Time Display */
-.voice-time {
-    font-size: 11px;
-    color: #b0b0d1;
-    font-weight: 500;
-    min-width: 30px;
-    text-align: right;
-}
 
 /* =========================================
    🗑️ MESSAGE DELETE MENU (POP-UP)
    ========================================= */
+.bubble-content.selected { box-shadow: 0 0 0 2px #ff4d4d; transform: scale(0.98); }
+.msg-options-menu { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(30, 41, 59, 0.95); border: 1px solid rgba(255, 77, 77, 0.4); border-radius: 8px; padding: 5px; z-index: 50; box-shadow: 0 4px 15px rgba(0,0,0,0.4); animation: fadeIn 0.2s ease; }
+.sent .msg-options-menu { left: -90px; right: auto; }
+.received .msg-options-menu { right: -90px; left: auto; }
+.msg-options-menu button { background: transparent; border: none; color: #ff4d4d; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; cursor: pointer; padding: 8px 12px; border-radius: 5px; transition: 0.2s; }
+.msg-options-menu button:hover { background: rgba(255, 77, 77, 0.15); }
 
-/* Jab message par click ho (Selected state) */
-.bubble-content.selected {
-    box-shadow: 0 0 0 2px #ff4d4d; /* Laal border highlight ke liye */
-    transform: scale(0.98);
-}
-
-/* Delete Popup Menu */
-.msg-options-menu {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(30, 41, 59, 0.95);
-    border: 1px solid rgba(255, 77, 77, 0.4);
-    border-radius: 8px;
-    padding: 5px;
-    z-index: 50;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-    animation: fadeIn 0.2s ease;
-}
-
-/* Apne message (Sent) ke left me popup dikhega */
-.sent .msg-options-menu {
-    left: -90px;
-    right: auto;
-}
-
-/* Dusre ke message (Received) ke right me popup dikhega (Optional) */
-.received .msg-options-menu {
-    right: -90px;
-    left: auto;
-}
-
-.msg-options-menu button {
-    background: transparent;
-    border: none;
-    color: #ff4d4d;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    padding: 8px 12px;
-    border-radius: 5px;
-    transition: 0.2s;
-}
-
-.msg-options-menu button:hover {
-    background: rgba(255, 77, 77, 0.15);
-}
 
 /* =========================================
    📎 ATTACHMENT MENU & 📍 LOCATION CARD
    ========================================= */
+.attach-menu { position: absolute; bottom: 50px; left: 0; background: rgba(30, 41, 59, 0.98); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; display: flex; flex-direction: column; padding: 8px; gap: 5px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 100; width: 150px; animation: slideUp 0.2s ease; }
+@keyframes slideUp { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.attach-menu button { background: transparent; border: none; color: white; padding: 10px; display: flex; align-items: center; gap: 12px; font-size: 14px; cursor: pointer; border-radius: 8px; transition: 0.2s; width: 100%; }
+.attach-menu button:hover { background: rgba(255, 255, 255, 0.1); color: #4cc9f0; }
 
-/* Attachment Pop-up Menu */
-.attach-menu {
-    position: absolute;
-    bottom: 50px;
-    left: 0;
-    background: rgba(30, 41, 59, 0.98);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    padding: 8px;
-    gap: 5px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-    z-index: 100;
-    width: 150px;
-    animation: slideUp 0.2s ease;
-}
+.chat-location-card { width: 260px; background: rgba(15, 23, 42, 0.9); border-radius: 8px; overflow: hidden; cursor: pointer; transition: transform 0.2s; border: 1px solid rgba(255, 255, 255, 0.1); }
+.chat-location-card:hover { transform: scale(1.02); }
+.location-map-preview { height: 120px; background: linear-gradient(135deg, #1e293b 0%, #334155 100%); display: flex; align-items: center; justify-content: center; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+.pin-icon { font-size: 40px; color: #ef4444; filter: drop-shadow(0 0 5px rgba(239, 68, 68, 0.5)); }
+.location-info { padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; }
+.loc-title { font-size: 14px; font-weight: 600; color: white; }
+.loc-subtitle { font-size: 11px; color: #94a3b8; }
 
-@keyframes slideUp { 
-    from { transform: translateY(10px); opacity: 0; } 
-    to { transform: translateY(0); opacity: 1; } 
-}
-
-.attach-menu button {
-    background: transparent;
-    border: none;
-    color: white;
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 14px;
-    cursor: pointer;
-    border-radius: 8px;
-    transition: 0.2s;
-    width: 100%;
-}
-
-.attach-menu button:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: #4cc9f0;
-}
-
-/* Location Card UI in Chat Bubble */
-.chat-location-card {
-    width: 260px;
-    background: rgba(15, 23, 42, 0.9);
-    border-radius: 8px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: transform 0.2s;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.chat-location-card:hover {
-    transform: scale(1.02);
-}
-
-.location-map-preview {
-    height: 120px;
-    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.pin-icon {
-    font-size: 40px;
-    color: #ef4444; /* Red Map Pin */
-    filter: drop-shadow(0 0 5px rgba(239, 68, 68, 0.5));
-}
-
-.location-info {
-    padding: 10px 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.loc-title {
-    font-size: 14px;
-    font-weight: 600;
-    color: white;
-}
-
-.loc-subtitle {
-    font-size: 11px;
-    color: #94a3b8;
-}
 
 /* =========================================
    📱 PHONEBOOK SYNC MODAL CSS
    ========================================= */
-
-.modal-divider {
-    display: flex;
-    align-items: center;
-    text-align: center;
-    color: #94a3b8;
-    font-size: 12px;
-    font-weight: 600;
-    margin-bottom: 15px;
-}
-
-.modal-divider::before,
-.modal-divider::after {
-    content: '';
-    flex: 1;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.modal-divider span {
-    padding: 0 10px;
-}
-
-/* Green Sync Button */
-.sync-btn {
-    width: 100%;
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
-}
-
-.sync-btn:hover {
-    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
-}
+.modal-divider { display: flex; align-items: center; text-align: center; color: #94a3b8; font-size: 12px; font-weight: 600; margin-bottom: 15px; }
+.modal-divider::before, .modal-divider::after { content: ''; flex: 1; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+.modal-divider span { padding: 0 10px; }
+.sync-btn { width: 100%; background: linear-gradient(135deg, #10b981 0%, #059669 100%); display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); }
+.sync-btn:hover { box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5); }
